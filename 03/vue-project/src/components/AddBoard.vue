@@ -31,7 +31,8 @@ export default {
     data() {
         return{
             input:'',
-            valid:false
+            valid:false,
+            test:false
         }
     },
     watch: {
