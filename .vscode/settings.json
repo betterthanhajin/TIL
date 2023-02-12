@@ -1,3 +1,17 @@
 {
-    "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+  },
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "editor.formatOnType": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "eslint.validate": [
+    "vue",
+    "javascript",
+    "typescript",
+    "html"
+  ],
 }
