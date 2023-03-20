@@ -4,6 +4,7 @@ var index = 0;//tabindex
 var widthSum = 0;
 var src = null;
 const titleArr = [];
+const tabArr = [];
 var same = true;
 var msg = ''; 
 var active = false;
@@ -19,6 +20,7 @@ var fnLoadContents = function(_obj, _src , title) {
 	if(title !== undefined){
 		
 		$('#tabArea').css('display','block');
+		$('.tabContainer').css('display', 'block');
 		$('#contents_area').css('display', 'none');
 		paramTitle = title;
 		
@@ -45,6 +47,7 @@ var fnLoadContents = function(_obj, _src , title) {
     	titleArr.push(title);
     	alert(JSON.stringify(titleArr));
 		$(tab).addClass('tablink');
+		tabArr.push(tab);
 		const close = document.createElement('div');
 		$(close).addClass('closed');
 	    $("#tab"+idx).attr("href", _src);
@@ -53,14 +56,12 @@ var fnLoadContents = function(_obj, _src , title) {
 	    $('.tabContainer').append(tab);
 		if(idx === 0){
 			widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-			//$("#tab"+idx).css("position", 'fixed');
 			$("#tab"+idx).css("left", 19 + 'px');
-			widthSum = widthSum + 20 + 19;
+			widthSum = widthSum + 10 + 19;
 		}else {
 			$("#tab"+idx).css("left", (widthSum)+ 'px');
 			 widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-			 //$("#tab"+idx).css("position", 'fixed');
-			 widthSum =  widthSum +  20;
+			 widthSum =  widthSum +  10;
 		}
 		index = idx;
 		$('<iframe>', {
@@ -99,6 +100,7 @@ var fnLoadContents = function(_obj, _src , title) {
 	}else if(title === undefined){//dashboard only
 		$('#contents_area').css('display', 'block');
 		$('#tabArea').css('display','none');
+		$('.tabContainer').css('display', 'none');
 		$('#contents_area').attr('src', '${contextPath}/globalcj/bpms/bpms.dashboard');
 		return;
 	}
@@ -207,10 +209,13 @@ var fnIframeResize = function(height) {
 //tab delete
 $(document).on('click','.closed' , function(e){
 	alert(e.target.parentElement.textContent);
+	alert(JSON.stringify(tabArr));
 	for(var i = 0; i < titleArr.length; i++) {
 	    if(titleArr[i] === e.target.parentElement.textContent) {
-	    	$($('.tabContent')[i]).css("display", "none");
-	    	$($('.tablink')[i]).css("display", "none");
-		}
-	}	
+	    	$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
+	    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
+	    	titleArr.splice(i,1);
+	    	alert(titleArr[i]);
+		}	
+	}
 });
