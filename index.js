@@ -3,7 +3,9 @@ var i = 0;
 var index = 0;//tabindex
 var widthSum = 0;
 var src = null;
+const srcArr = [];
 const titleArr = [];
+const titleArr2 = [];
 const tabArr = [];
 var same = true;
 var msg = ''; 
@@ -23,7 +25,6 @@ var fnLoadContents = function(_obj, _src , title) {
 		$('.tabContainer').css('display', 'block');
 		$('#contents_area').css('display', 'none');
 		paramTitle = title;
-		
 		src = _src;
 		tab.id = 'tab' +idx;
 		//tab메뉴개수제한 10개이상 리턴
@@ -45,9 +46,7 @@ var fnLoadContents = function(_obj, _src , title) {
 	    }
 
     	titleArr.push(title);
-    	alert(JSON.stringify(titleArr));
 		$(tab).addClass('tablink');
-		tabArr.push(tab);
 		const close = document.createElement('div');
 		$(close).addClass('closed');
 	    $("#tab"+idx).attr("href", _src);
@@ -86,7 +85,7 @@ var fnLoadContents = function(_obj, _src , title) {
 			}else{
 				$($('.tabContent')[i]).css("display", "none");
 			}
-			
+			srcArr.push(src);
 			}
 		idx++;
 		//title에따른 height길이
@@ -207,15 +206,20 @@ var fnIframeResize = function(height) {
 };
 
 //tab delete
+var title = [];
 $(document).on('click','.closed' , function(e){
 	alert(e.target.parentElement.textContent);
-	alert(JSON.stringify(tabArr));
 	for(var i = 0; i < titleArr.length; i++) {
-	    if(titleArr[i] === e.target.parentElement.textContent) {
-	    	$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
-	    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
-	    	titleArr.splice(i,1);
-	    	alert(titleArr[i]);
-		}	
+	    if(titleArr[i] !== e.target.parentElement.textContent) {
+	    	title.push(titleArr[i]);
+	    	
+		}else{
+		   	titleArr.splice(i,1);
+	    	srcArr.splice(i,1);
+		}
+	    
+    	$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
+    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
 	}
+	//redraw
 });
