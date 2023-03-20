@@ -1,15 +1,15 @@
-
 var cnt = 0;
 var i = 0;
 var index = 0;//tabindex
 var widthSum = 0;
 var src = null;
-const titleArr = new Set();
+const titleArr = [];
 var same = true;
 var msg = ''; 
 var active = false;
 var paramTitle = '';
 var idx = 0;
+var k = 0;
 
 var fnLoadContents = function(_obj, _src , title) {
 	paramTitle = title;
@@ -17,10 +17,11 @@ var fnLoadContents = function(_obj, _src , title) {
 	var tab = document.createElement('div');
 	
 	if(title !== undefined){
+		
 		$('#tabArea').css('display','block');
 		$('#contents_area').css('display', 'none');
 		paramTitle = title;
-		//alert("title"+ paramTitle);
+		
 		src = _src;
 		tab.id = 'tab' +idx;
 		//tab메뉴개수제한 10개이상 리턴
@@ -28,45 +29,40 @@ var fnLoadContents = function(_obj, _src , title) {
 	    	alert("더이상 탭을 추가할수 없습니다");
 	    	return;
 	    }
-    	if(titleArr.has(title)){
-    		msg = 'same';
-    		same = true;
-    		active(title);
-    		return;
-    	}else{
-    		same = true;
-    	}
-    	titleArr.add(title);
+
+		for(var i = 0; i < titleArr.length; i++) {
+			if(i < idx ){
+			  	if(titleArr[i] === title){
+		    		msg = 'same';
+		    		same = true;
+		    		active(title);
+		    		return;
+		    	}
+			}
+
+	    }
+
+    	titleArr.push(title);
+    	alert(JSON.stringify(titleArr));
 		$(tab).addClass('tablink');
 		const close = document.createElement('div');
 		$(close).addClass('closed');
-		$(close).text("Xsafdsfsadfs");
-		//alert("X");
-		$(tab).appendTo(close);
-	    $('#tabArea').append(tab);
 	    $("#tab"+idx).attr("href", _src);
-	    $("#tab"+idx).text(title);
-		var first = false;
+	  	$(tab).text(title);
+	    $(tab).append(close);
+	    $('.tabContainer').append(tab);
 		if(idx === 0){
 			widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-			alert("idx 0");
+			//$("#tab"+idx).css("position", 'fixed');
 			$("#tab"+idx).css("left", 19 + 'px');
-			first = true;
-			widthSum = 0;
-		}
-		else{
-			widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-			alert("for" + widthSum);
-			first = false;
-		}
-
-		if(!first){
-			alert("false");
-			alert(widthSum);
-			$("#tab"+idx).css("left", (widthSum) + (30 * idx) + 'px');
+			widthSum = widthSum + 20 + 19;
+		}else {
+			$("#tab"+idx).css("left", (widthSum)+ 'px');
+			 widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+			 //$("#tab"+idx).css("position", 'fixed');
+			 widthSum =  widthSum +  20;
 		}
 		index = idx;
-		
 		$('<iframe>', {
 			   src: _src,
 			   id:  'myFrame',
@@ -92,18 +88,25 @@ var fnLoadContents = function(_obj, _src , title) {
 			
 			}
 		idx++;
-	    fnIframeResize();
+		//title에따른 height길이
+		switch(title){
+			case '사전심의목록': { fnIframeResize(undefined); break;}
+			case '심의결과': { fnIframeResize($("body").height()+100); break; }
+			case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
+			case '완료심의목록': { fnIframeResize($("body").height()); break; }
+		}
+		
 	}else if(title === undefined){//dashboard only
 		$('#contents_area').css('display', 'block');
 		$('#tabArea').css('display','none');
 		$('#contents_area').attr('src', '${contextPath}/globalcj/bpms/bpms.dashboard');
-		fnIframeResize();
 		return;
 	}
 };
 
 $(document).on('click','.tablink' , function(e){
-	var href = $(e.target).attr("href");
+	//alert(e.target.textContent);
+	var href = $(e).attr("href");
 	var text =  $(e.target).text();
 	var flag = false;
 	var closed = false;
@@ -111,14 +114,18 @@ $(document).on('click','.tablink' , function(e){
     if($('.tablink').length >= 10){
     	return;
     }
-
-	for(var i = 0; i < $('.tablink').length; i++){
-		if($(e.target).attr("href") === $($('.tablink')[i]).attr('href')){
+	
+   	
+	for(var i = 0; i < titleArr.length; i++) {
+	    if(titleArr[i] === e.target.textContent) {
 			flag = true;//중복여부
+			alert(flag);
 		}else{
 			flag = false;
 		}
-	}
+	}	
+
+	
 
 	if(!same){
 		flag = true;
@@ -150,37 +157,27 @@ $(document).on('click','.tablink' , function(e){
 		}else{
 			$($('.tabContent')[i]).css("display", "none");
 		}
-		
+		if(e.target.textContent === ''){
+			return;
+		}
 		if(flag){
-			//중복체크
-			if($(e.target).attr("href") === $($('.tablink')[i]).attr('href')){//중복의경우
-				//alert("중복");
-				$($('.tablink')[i]).addClass("active");
-				$($('.tablink')[i]).removeClass("nonactive");
-				fnIframeResize();
-				$($('.tabContent')[i]).css("display", "block");
-			}else{//중복아닌애들
-				$($('.tabContent')[i]).css("display", "none");
-				$($('.tablink')[i]).removeClass("active");//tab활성화
-				$($('.tablink')[i]).addClass("nonactive");
+			alert(e.target.textContent);
+			for(var i = 0; i < titleArr.length; i++) {
+				if(titleArr[i] === e.target.textContent){//중복의경우
+					$($('.tablink')[i]).addClass("active");
+					$($('.tablink')[i]).removeClass("nonactive");
+					$($('.tabContent')[i]).css("display", "block");
+				}else{//중복아닌애들
+					$($('.tabContent')[i]).css("display", "none");
+					$($('.tablink')[i]).removeClass("active");//tab활성화
+					$($('.tablink')[i]).addClass("nonactive");
+				}
 			}
+
 		}
 	
 	} 
 });
-
-const closedFunc = function(text) {
-	alert(text);
-	if(titleArr.has(text)){
-		for(var i = 0; i < $('.tablink').length; i++){
-			if($($('.tablink')[i]).text() === title){
-				$($('.tablink')[i]).css("display",'none');
-				$($('.tabContent')[i]).css("display", "none");
-				break;
-			}
-		}
-	}
-}
 
 var active = function(title) {
 	alert('active');
@@ -199,10 +196,21 @@ var active = function(title) {
 	}
 }
 
-var fnIframeResize = function(p_height) {
-    if(p_height != undefined) {
-        $('#contents_area').css("height", p_height + "px");
+var fnIframeResize = function(height) {
+    if(height != undefined) {
+        $('.tabContent').css("height", height + "px");
     }else{
-       $('#contents_area').css("height", 99 + "%");
+     	$('.tabContent').css("height", 100 + "vh");
     }
 };
+
+//tab delete
+$(document).on('click','.closed' , function(e){
+	alert(e.target.parentElement.textContent);
+	for(var i = 0; i < titleArr.length; i++) {
+	    if(titleArr[i] === e.target.parentElement.textContent) {
+	    	$($('.tabContent')[i]).css("display", "none");
+	    	$($('.tablink')[i]).css("display", "none");
+		}
+	}	
+});
