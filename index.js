@@ -8,6 +8,7 @@ var titleArr = [];
 var same = true;
 var msg = ''; 
 var active = false;
+var draw = false;
 var paramTitle = '';
 var idx = 0;
 var k = 0;
@@ -189,10 +190,22 @@ $(document).on('click','.tablink' , function(e){
 
 var replay = false;
 $(document).on('click','.allClose' , function all(e){
-	//alert("replay");
-	
-	if(replay){
-			alert("true");
+	//alert("init");
+	for(var i = 0; i < $('.tablink').length; i++) {
+		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
+    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
+    	//alert($('.tablink')[i]);
+    	if($('.tablink')[i] !== undefined){
+       		if($('.tablink')[i].parentNode.removeChild($('.tablink')[i]) && $('.tabContent')[i].parentNode.removeChild($('.tabContent')[i])){
+       			//alert("init");
+       			all();
+       			replay = true;
+       			
+       		}
+    	}
+
+   		if(replay){
+			//alert("true");
   	   		$('#contents_area').css('display', 'block');
   	   		$('#tabArea').css('display','none');
   	   		$('.tabContainer').css('display', 'none');
@@ -201,18 +214,7 @@ $(document).on('click','.allClose' , function all(e){
   	   		srcArr = [];
   	   		widthSum = 0;
   	   		idx = 0;
-  	   		return;
-  	}
-		
-	for(var i = 0; i < $('.tablink').length; i++) {
-		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
-    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
-   		if($('.tablink')[i].parentNode.removeChild($('.tablink')[i]) && $('.tabContent')[i].parentNode.removeChild($('.tabContent')[i])){
-   			alert("init");
-   			all();
-   			replay = true;
-   			
-   		}
+  		}
 	}
 
 });
@@ -268,36 +270,36 @@ const redraw = function(title) {
 	
 	for(var i = 0; i < newTitle.length; i++){
 		drawing(newTitle[i], newSrc[i]);
-		
+		alert("new");
+		draw = true;
 	}
-	
-
 };
-var idx2 = 0;
-var widthSum2 = 0;
+
+idx = 0;
+widthSum = 0;
 const drawing = function(title,src) {
 	titleArr = [];
 	srcArr = [];
 	alert("drawing");
 	var tab = document.createElement('div');
-	tab.id = 'tab' +idx2;
+	tab.id = 'tab' +idx;
 	$(tab).addClass('tablink');
 	const close = document.createElement('div');
 	$(close).addClass('closed');
-    $("#tab"+idx2).attr("href", src);
+    $("#tab"+idx).attr("href", src);
   	$(tab).text(title);
     $(tab).append(close);
     $('.tabContainer').append(tab);
-	if(idx2 === 0){
-		widthSum2 = widthSum2 + $("#tab"+(idx2)).outerWidth();
-		$("#tab"+idx2).css("left", 19 + 'px');
-		widthSum2 = widthSum2 + 10 + 19;
+	if(idx === 0){
+		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+		$("#tab"+idx).css("left", 19 + 'px');
+		widthSum = widthSum + 10 + 19;
 	}else {
-		$("#tab"+idx2).css("left", (widthSum2)+ 'px');
-		widthSum2 = widthSum2 + $("#tab"+(idx2)).outerWidth();
-		widthSum2 =  widthSum2 +  10;
+		$("#tab"+idx).css("left", (widthSum)+ 'px');
+		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+		widthSum =  widthSum +  10;
 	}
-	index = idx2;
+	index = idx;
 	$('<iframe>', {
 		   src: src,
 		   id:  'myFrame',
@@ -325,7 +327,7 @@ const drawing = function(title,src) {
 	alert("src" + src);
 	titleArr.push(title);
 	srcArr.push(src);
-	idx2++;
+	idx++;
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
 	switch(title){
 		case '사전심의목록': { fnIframeResize(undefined); break;}
@@ -337,32 +339,27 @@ const drawing = function(title,src) {
 	}
 };
 var del = false;
+var remove = false;
 const delTab = function(title) {
-	alert("leng" + $('.tablink').length);
+	//alert("leng" + $('.tablink').length);
+	draw = false;
+	alert(draw);
 	if($('.tablink').length === 0){
-		alert("???");
-		del = false;
+		alert("redraw");
 		redraw(title);
-	}
-	for(var i = 0; i < $('.tablink').length; i++) {
-		if(del){
-			return;
+		return;
+	}else{
+		for(var i = 0; i < $('.tablink').length; i++) {
+			if(draw){
+				alert(draw);
+				return;
+			}
+	   		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
+	       	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
+	       	remove = true;
+	   		if(remove){
+	   			delTab(title);
+	   		}
 		}
-		alert("obj"+$('.tablink')[i]);
-		alert("#$@#WEW" + i);
-		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
-    	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
-    	if($('.tablink').length === 0){
-    		redraw(title);
-    		del = true;
-    		break;
-    	}else{
-    		if($('.tablink')[i].parentNode.removeChild($('.tablink')[i]) && $('.tabContent')[i].parentNode.removeChild($('.tabContent')[i])){
-    			alert("init");
-    			delTab(title);
-    		}
-    	}
-
 	}
-	
 }
