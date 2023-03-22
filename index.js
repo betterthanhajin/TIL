@@ -93,17 +93,17 @@ var fnLoadContents = function(_obj, _src , title) {
 		
 		//title에따른 height길이 더 좋은방법이있다면 바꿀예정
 		switch(title){
-			case '사전심의목록': { fnIframeResize(undefined); break;}
+			case '사전심의목록': { fnIframeResize($("body").height()); break;}
 			case '심의결과': { fnIframeResize($("body").height()+100); break; }
 			case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
 			case '완료심의목록': { fnIframeResize($("body").height()); break; }
 			case '사엄장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
 			case '계획전용': { fnIframeResize($("body").height()+100); break; }
 			case '부문요약': { fnIframeResize(2600); break; }
-			case '사업장요약': { fnIframeResize($("body").height()); break; }
+			case '사업장요약': { fnIframeResize(800); break; }
 			case '공사진척' : {fnIframeResize($("body").height()); break;}
 			case '실행계획' : {fnIframeResize($("body").height()); break;}
-			
+			case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
 		}
 		
 	}else if(title === undefined){//dashboard only
@@ -193,13 +193,17 @@ $(document).on('click','.tablink' , function(e){
 var replay = false;
 $(document).on('click','.allClose' , function all(e){
 	//alert("init");
+	//alert($('.tablink').length)
 	for(var i = 0; i < $('.tablink').length; i++) {
 		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
     	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
     	//alert($('.tablink')[i]);
+    	if($('.tablink').length === 0){
+    		replay = true;
+    	}
     	if($('.tablink')[i] !== undefined){
        		if($('.tablink')[i].parentNode.removeChild($('.tablink')[i]) && $('.tabContent')[i].parentNode.removeChild($('.tabContent')[i])){
-       			//alert("init");
+       			//alert("init2222");
        			all();
        			replay = true;
        			
@@ -350,7 +354,7 @@ const drawing = function(title,src) {
 	idx++;
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
 	switch(title){
-		case '사전심의목록': { fnIframeResize(undefined); break;}
+		case '사전심의목록': { fnIframeResize($("body").height()); break;}
 		case '심의결과': { fnIframeResize($("body").height()+100); break; }
 		case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
 		case '완료심의목록': { fnIframeResize($("body").height()); break; }
