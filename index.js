@@ -1,3 +1,4 @@
+
 var cnt = 0;
 var i = 0;
 var index = 0;//tabindex
@@ -275,8 +276,8 @@ const redraw = function(title) {
 	}
 };
 
-idx = 0;
-widthSum = 0;
+
+
 const drawing = function(title,src) {
 	titleArr = [];
 	srcArr = [];
@@ -290,7 +291,13 @@ const drawing = function(title,src) {
   	$(tab).text(title);
     $(tab).append(close);
     $('.tabContainer').append(tab);
-	if(idx === 0){
+    
+    if(draw){
+    	widthSum = 0;
+    	idx = 0;
+    }
+    
+    if(idx === 0){
 		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 		$("#tab"+idx).css("left", 19 + 'px');
 		widthSum = widthSum + 10 + 19;
