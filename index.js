@@ -1,4 +1,3 @@
-
 var cnt = 0;
 var i = 0;
 var index = 0;//tabindex
@@ -88,7 +87,7 @@ var fnLoadContents = function(_obj, _src , title) {
 				$($('.tabContent')[i]).css("display", "none");
 			}
 			}
-		alert("src" + src);
+		//alert("src" + src);
 		srcArr.push(src);
 		idx++;
 		
@@ -99,6 +98,11 @@ var fnLoadContents = function(_obj, _src , title) {
 			case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
 			case '완료심의목록': { fnIframeResize($("body").height()); break; }
 			case '사엄장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
+			case '계획전용': { fnIframeResize($("body").height()+100); break; }
+			case '부문요약': { fnIframeResize(2600); break; }
+			case '사업장요약': { fnIframeResize($("body").height()); break; }
+			case '공사진척' : {fnIframeResize($("body").height()); break;}
+			case '실행계획' : {fnIframeResize($("body").height()); break;}
 			
 		}
 		
@@ -112,7 +116,7 @@ var fnLoadContents = function(_obj, _src , title) {
 };
 
 $(document).on('click','.tablink' , function(e){
-	alert(e.target.textContent);
+	//alert(e.target.textContent);
 	var href = $(e).attr("href");
 	var text =  $(e.target).text();
 	var flag = false;
@@ -122,18 +126,15 @@ $(document).on('click','.tablink' , function(e){
     	active(e.target.textContent);
     	return;
     }
-	
-   	
+
 	for(var i = 0; i < titleArr.length; i++) {
 	    if(titleArr[i] === e.target.textContent) {
 			flag = true;//중복여부
-			alert(flag);
+			//alert(flag);
 		}else{
 			flag = false;
 		}
 	}	
-
-	
 
 	if(!same){
 		flag = true;
@@ -170,7 +171,7 @@ $(document).on('click','.tablink' , function(e){
 			return;
 		}
 		if(flag){
-			alert(e.target.textContent);
+			//alert(e.target.textContent);
 			for(var i = 0; i < titleArr.length; i++) {
 				if(titleArr[i] === e.target.textContent){//중복의경우
 					$($('.tablink')[i]).addClass("active");
@@ -221,8 +222,8 @@ $(document).on('click','.allClose' , function all(e){
 });
 
 var active = function(title) {
-	alert('active');
-	alert(title);
+	//alert('active');
+	//alert(title);
 	for(var i = 0; i < $('.tablink').length; i++){
 		if($($('.tablink')[i]).text() === title){//중복의경우
 			$($('.tablink')[i]).addClass("active");
@@ -253,50 +254,63 @@ $(document).on('click','.closed' , function(e){
 	delTab(e.target.parentElement.textContent);
 	//redraw
 });
-
+var cnt = 0;
+var reset = false;
 const redraw = function(title) {
-	alert("title"+ title);
-	alert("redraw");
-	alert("JSON" + JSON.stringify(titleArr));
+	//alert("title"+ title);
+	//alert("len" + titleArr.length);
 	var newTitle = [];
 	var newSrc = [];
+
 	for(var j = 0; j < titleArr.length; j++){
 		if(titleArr[j] !== title){
-			alert("?#@$@#$" + titleArr[j]);
-			alert("SDAF#$%#$" + srcArr[j]);
+			//alert("?#@$@#$" + titleArr[j]);
+			//alert("SDAF#$%#$" + srcArr[j]);
 			newTitle.push(titleArr[j]);
 			newSrc.push(srcArr[j]);
 		}
 	}
 	
 	for(var i = 0; i < newTitle.length; i++){
-		drawing(newTitle[i], newSrc[i]);
-		alert("new");
-		draw = true;
+		if(cnt === 0){
+			reset = true;
+			draw = true;
+			drawing(newTitle[i], newSrc[i]);
+		}else{
+			reset = false;
+			draw = true;
+			drawing(newTitle[i], newSrc[i]);
+		}
+		cnt++;
+		//alert("cnt" + cnt);
 	}
+	
 };
 
 
 
 const drawing = function(title,src) {
-	titleArr = [];
-	srcArr = [];
-	alert("drawing");
+	//alert("drawing");
 	var tab = document.createElement('div');
+    if(reset){
+    	widthSum = 0;
+    	idx = 0;
+    	titleArr = [];
+    	srcArr = [];
+    }
+    //alert("i" + idx);
 	tab.id = 'tab' +idx;
 	$(tab).addClass('tablink');
 	const close = document.createElement('div');
 	$(close).addClass('closed');
     $("#tab"+idx).attr("href", src);
   	$(tab).text(title);
+	titleArr.push(title);
+	//alert("redratitle" + titleArr.length);
+	srcArr.push(src);
     $(tab).append(close);
     $('.tabContainer').append(tab);
-    
-    if(draw){
-    	widthSum = 0;
-    	idx = 0;
-    }
-    
+        
     if(idx === 0){
 		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 		$("#tab"+idx).css("left", 19 + 'px');
@@ -306,6 +320,7 @@ const drawing = function(title,src) {
 		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 		widthSum =  widthSum +  10;
 	}
+    
 	index = idx;
 	$('<iframe>', {
 		   src: src,
@@ -331,9 +346,7 @@ const drawing = function(title,src) {
 			$($('.tabContent')[i]).css("display", "none");
 		}
 		}
-	alert("src" + src);
-	titleArr.push(title);
-	srcArr.push(src);
+	//alert("src" + src);
 	idx++;
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
 	switch(title){
@@ -342,23 +355,31 @@ const drawing = function(title,src) {
 		case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
 		case '완료심의목록': { fnIframeResize($("body").height()); break; }
 		case '사엄장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
+		case '계획전용': { fnIframeResize($("body").height()+100); break; }
+		case '부문요약': { fnIframeResize(2600); break; }
+		case '사업장요약': { fnIframeResize(800); break; }
+		case '공사진척' : {fnIframeResize($("body").height()); break;}
+		case '실행계획' : {fnIframeResize($("body").height()); break;}
+		case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
 		
 	}
 };
+
 var del = false;
 var remove = false;
+
 const delTab = function(title) {
-	//alert("leng" + $('.tablink').length);
+	cnt = 0
 	draw = false;
-	alert(draw);
 	if($('.tablink').length === 0){
-		alert("redraw");
+		//alert("redraw");
 		redraw(title);
+		remove = false;
 		return;
 	}else{
 		for(var i = 0; i < $('.tablink').length; i++) {
-			if(draw){
-				alert(draw);
+			if(draw && !remove){
+				//alert(draw);
 				return;
 			}
 	   		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
