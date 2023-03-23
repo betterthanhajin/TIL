@@ -15,12 +15,13 @@ var k = 0;
 
 //create + add tab
 var fnLoadContents = function(_obj, _src , title) {
+	//alert(title);
 	paramTitle = title;
+	
 	var container =  document.getElementsByClassName("container");
 	var tab = document.createElement('div');
 	
 	if(title !== undefined){
-		
 		$('#tabArea').css('display','block');
 		$('.tabContainer').css('display', 'block');
 		$('#contents_area').css('display', 'none');
@@ -90,21 +91,8 @@ var fnLoadContents = function(_obj, _src , title) {
 		//alert("src" + src);
 		srcArr.push(src);
 		idx++;
-		
-		//title에따른 height길이 더 좋은방법이있다면 바꿀예정
-		switch(title){
-			case '사전심의목록': { fnIframeResize($("body").height()); break;}
-			case '심의결과': { fnIframeResize($("body").height()+100); break; }
-			case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
-			case '완료심의목록': { fnIframeResize($("body").height()); break; }
-			case '사엄장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
-			case '계획전용': { fnIframeResize($("body").height()+100); break; }
-			case '부문요약': { fnIframeResize(2600); break; }
-			case '사업장요약': { fnIframeResize(800); break; }
-			case '공사진척' : {fnIframeResize($("body").height()); break;}
-			case '실행계획' : {fnIframeResize($("body").height()); break;}
-			case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
-		}
+		height(title);
+
 		
 	}else if(title === undefined){//dashboard only
 		$('#contents_area').css('display', 'block');
@@ -114,6 +102,28 @@ var fnLoadContents = function(_obj, _src , title) {
 		return;
 	}
 };
+
+const height = function(title){
+	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
+	//alert(title);
+	switch(title){
+		case '사전심의목록': { fnIframeResize($("body").height()); break;}
+		case '심의결과': { fnIframeResize($("body").height()+300); break; }
+		case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
+		case '완료심의목록': { fnIframeResize($("body").height()); break; }
+		case '사업장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
+		case '계획전용목록': { fnIframeResize(undefined); break; }
+		case '부문요약': { fnIframeResize(2800); break; }
+		case '사업장요약': {fnIframeResize(2000); break; }
+		case '공사진척' : {fnIframeResize($("body").height()); break;}
+		case '실적상세' : {fnIframeResize($("body").height()); break;}
+		case '실행계획' : {fnIframeResize($("body").height()); break;}
+		case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
+		case '부문일괄' : {fnIframeResize($("body").height()); break;}
+		case '사후평가 목록' : {fnIframeResize($("body").height()); break;}
+		case '집계요약' : {fnIframeResize($("body").height()); break;}
+	}
+}
 
 $(document).on('click','.tablink' , function(e){
 	//alert(e.target.textContent);
@@ -171,7 +181,7 @@ $(document).on('click','.tablink' , function(e){
 			return;
 		}
 		if(flag){
-			//alert(e.target.textContent);
+			height(e.target.textContent);
 			for(var i = 0; i < titleArr.length; i++) {
 				if(titleArr[i] === e.target.textContent){//중복의경우
 					$($('.tablink')[i]).addClass("active");
@@ -228,6 +238,7 @@ $(document).on('click','.allClose' , function all(e){
 var active = function(title) {
 	//alert('active');
 	//alert(title);
+	height(title);
 	for(var i = 0; i < $('.tablink').length; i++){
 		if($($('.tablink')[i]).text() === title){//중복의경우
 			$($('.tablink')[i]).addClass("active");
@@ -244,6 +255,7 @@ var active = function(title) {
 }
 
 var fnIframeResize = function(height) {
+	//alert(height);
     if(height != undefined) {
         $('.tabContent').css("height", height + "px");
     }else{
@@ -288,6 +300,18 @@ const redraw = function(title) {
 		cnt++;
 		//alert("cnt" + cnt);
 	}
+
+	if(newTitle.length === 0){
+		widthSum = 0;
+    	idx = 0;
+    	titleArr = [];
+    	srcArr = [];
+		$('#contents_area').css('display', 'block');
+		$('#tabArea').css('display','none');
+		$('.tabContainer').css('display', 'none');
+		$('#contents_area').attr('src', '${contextPath}/globalcj/bpms/bpms.dashboard');
+		return;
+	}
 	
 };
 
@@ -295,6 +319,7 @@ const redraw = function(title) {
 
 const drawing = function(title,src) {
 	//alert("drawing");
+	height(title);
 	var tab = document.createElement('div');
     if(reset){
     	widthSum = 0;
@@ -353,20 +378,7 @@ const drawing = function(title,src) {
 	//alert("src" + src);
 	idx++;
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
-	switch(title){
-		case '사전심의목록': { fnIframeResize($("body").height()); break;}
-		case '심의결과': { fnIframeResize($("body").height()+100); break; }
-		case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
-		case '완료심의목록': { fnIframeResize($("body").height()); break; }
-		case '사엄장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
-		case '계획전용': { fnIframeResize($("body").height()+100); break; }
-		case '부문요약': { fnIframeResize(2600); break; }
-		case '사업장요약': { fnIframeResize(800); break; }
-		case '공사진척' : {fnIframeResize($("body").height()); break;}
-		case '실행계획' : {fnIframeResize($("body").height()); break;}
-		case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
-		
-	}
+	height(title);
 };
 
 var del = false;
