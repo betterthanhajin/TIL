@@ -1,5 +1,3 @@
-var cnt = 0;
-var i = 0;
 var index = 0;//tabindex
 var widthSum = 0;
 var src = null;
@@ -9,15 +7,12 @@ var same = true;
 var msg = ''; 
 var active = false;
 var draw = false;
-var paramTitle = '';
 var idx = 0;
 var k = 0;
 
 //create + add tab
 var fnLoadContents = function(_obj, _src , title) {
-	//alert(title);
-	paramTitle = title;
-	
+
 	var container =  document.getElementsByClassName("container");
 	var tab = document.createElement('div');
 	
@@ -202,21 +197,16 @@ $(document).on('click','.tablink' , function(e){
 
 var replay = false;
 $(document).on('click','.allClose' , function all(e){
-	//alert("init");
-	//alert($('.tablink').length)
 	for(var i = 0; i < $('.tablink').length; i++) {
 		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
     	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
-    	//alert($('.tablink')[i]);
     	if($('.tablink').length === 0){
     		replay = true;
     	}
     	if($('.tablink')[i] !== undefined){
        		if($('.tablink')[i].parentNode.removeChild($('.tablink')[i]) && $('.tabContent')[i].parentNode.removeChild($('.tabContent')[i])){
-       			//alert("init2222");
        			all();
        			replay = true;
-       			
        		}
     	}
 
@@ -236,8 +226,6 @@ $(document).on('click','.allClose' , function all(e){
 });
 
 var active = function(title) {
-	//alert('active');
-	//alert(title);
 	height(title);
 	for(var i = 0; i < $('.tablink').length; i++){
 		if($($('.tablink')[i]).text() === title){//중복의경우
@@ -264,17 +252,15 @@ var fnIframeResize = function(height) {
 };
 
 //tab delete
-
 $(document).on('click','.closed' , function(e){
-	del = false;
 	delTab(e.target.parentElement.textContent);
 	//redraw
 });
+
 var cnt = 0;
 var reset = false;
 const redraw = function(title) {
-	//alert("title"+ title);
-	//alert("len" + titleArr.length);
+
 	var newTitle = [];
 	var newSrc = [];
 
@@ -381,21 +367,17 @@ const drawing = function(title,src) {
 	height(title);
 };
 
-var del = false;
 var remove = false;
-
 const delTab = function(title) {
 	cnt = 0
 	draw = false;
 	if($('.tablink').length === 0){
-		//alert("redraw");
 		redraw(title);
 		remove = false;
 		return;
 	}else{
 		for(var i = 0; i < $('.tablink').length; i++) {
 			if(draw && !remove){
-				//alert(draw);
 				return;
 			}
 	   		$('.tablink')[i].parentNode.removeChild($('.tablink')[i]);
@@ -407,3 +389,33 @@ const delTab = function(title) {
 		}
 	}
 }
+
+
+
+var fnModalCloseIframeInvokeRegister = function(p_gbn) {
+    fnModalPopUpClose('modalPopUpLayer');
+    var frm = document.getElementById("contents_area");
+    frm.contentWindow.fnRegister(p_gbn);
+};
+
+var fnMovePageGetMethod = function(p_menuid, p_paramMap) {
+	//alert("init");
+    var _movePage = "";
+    var _param = "";
+    var _src = $("#topMenu li a[menu_id='"+p_menuid+"']").attr("move_src");
+    if(_src == undefined || _src == null || $.trim(_src) == "") {
+        return;
+    }
+    for(var k in p_paramMap) {
+        _param += k + "=" + p_paramMap[k] + "&";
+    }
+    switch(p_menuid) {
+		case '00201': { p_menuid = '사전심의목록'; break;}
+		case '00301': { p_menuid = '완료심의목록'; break;}
+		case '00401': { p_menuid = '계획전용'; break;}
+		case '00701': { p_menuid = '사후평가 목록'; break;}
+	}
+    
+    _movePage = _src + "?" + _param;
+    fnLoadContents(this, _movePage,p_menuid);
+};
