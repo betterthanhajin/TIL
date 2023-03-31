@@ -12,7 +12,7 @@ var k = 0;
 
 //create + add tab
 var fnLoadContents = function(_obj, _src , title) {
-
+    //alert("init");
 	var container =  document.getElementsByClassName("container");
 	var tab = document.createElement('div');
 	
@@ -49,6 +49,7 @@ var fnLoadContents = function(_obj, _src , title) {
 	  	$(tab).text(title);
 	    $(tab).append(close);
 	    $('.tabContainer').append(tab);
+	    
 		if(idx === 0){
 			widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 			$("#tab"+idx).css("left", 19 + 'px');
@@ -61,7 +62,7 @@ var fnLoadContents = function(_obj, _src , title) {
 		index = idx;
 		$('<iframe>', {
 			   src: _src,
-			   id:  'myFrame',
+			   id:  'bpmsFrame' + idx,
 			   class: 'tabContent',
 			   frameborder: 0,
 			   scrolling: 'no'
@@ -85,11 +86,24 @@ var fnLoadContents = function(_obj, _src , title) {
 			}
 		//alert("src" + src);
 		srcArr.push(src);
+		$('.container').append($('.tabContainerWrap'));
 		idx++;
-		height(title);
+		//height(title);
+			//title에따른 height길이 더 좋은방법이있다면 바꿀예정
+		var settimeCnt = 0;
+		//height(title);
+		setTimeout(function(){
+			if (settimeCnt < 2) {
+				height(title);
+				settimeCnt += 1;
+			}
+		
+		}, 200);
 
 		
 	}else if(title === undefined){//dashboard only
+		//fnWindowReSize2();
+		$("body").css('overflow','scroll');
 		$('#contents_area').css('display', 'block');
 		$('#tabArea').css('display','none');
 		$('.tabContainer').css('display', 'none');
@@ -102,21 +116,22 @@ const height = function(title){
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
 	//alert(title);
 	switch(title){
-		case '사전심의목록': { fnIframeResize($("body").height()); break;}
-		case '심의결과': { fnIframeResize($("body").height()+300); break; }
-		case '사엄장별현황': { fnIframeResize($("body").height()+100); break; }
-		case '완료심의목록': { fnIframeResize($("body").height()); break; }
-		case '사업장별현황(완료)': { fnIframeResize($("body").height()+150); break; }
-		case '계획전용목록': { fnIframeResize(undefined); break; }
-		case '부문요약': { fnIframeResize(2800); break; }
-		case '사업장요약': {fnIframeResize(2000); break; }
-		case '공사진척' : {fnIframeResize($("body").height()); break;}
-		case '실적상세' : {fnIframeResize($("body").height()); break;}
-		case '실행계획' : {fnIframeResize($("body").height()); break;}
-		case '투자품의 모니터링' : {fnIframeResize($("body").height()); break;}
-		case '부문일괄' : {fnIframeResize($("body").height()); break;}
-		case '사후평가 목록' : {fnIframeResize($("body").height()); break;}
-		case '집계요약' : {fnIframeResize($("body").height()); break;}
+		case '사전심의목록': { fnIframeResize($("body").height()); $("body").css('overflow','hidden'); break;} 
+		case '심의결과': { fnIframeResize2($('.tabContent').contents().find("body").height());  $("body").css('overflow','scroll'); break; }
+		case '사엄장별현황': { fnIframeResize($("body").height()+100); $("body").css('overflow-x','scroll'); break; }
+		case '완료심의목록': { fnIframeResize($("body").height()); $("body").css('overflow','hidden'); break; }
+		case '사업장별현황(완료)': { fnIframeResize($("body").height()+150); $("body").css('overflow-x','scroll'); break; }
+		case '계획전용목록': { fnIframeResize(($("body").height())); $("body").css('overflow','hidden'); break; }
+		case '부문요약': { fnIframeResize(2720); $("body").css('overflow','scroll'); break; }
+		case '사업장요약': {fnIframeResize(1400); $("body").css('overflow','scroll'); break; }
+		case '공사진척' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '실적상세' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
+		case '실행계획' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '투자품의 모니터링' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
+		case '부문일괄' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '사후평가 목록' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
+		case '집계요약' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
+		
 	}
 }
 
@@ -148,7 +163,7 @@ $(document).on('click','.tablink' , function(e){
 	if(!flag){
 		$('<iframe>', {
 			   src: href,
-			   id:  'myFrame',
+			   id:  'bpmsFrame' + idx,
 			   class: 'tabContent',
 			   frameborder: 0,
 			   scrolling: 'no'
@@ -175,8 +190,17 @@ $(document).on('click','.tablink' , function(e){
 		if(e.target.textContent === ''){
 			return;
 		}
+		
+		var settimeCnt = 0;
+		setTimeout(function(){
+			if (settimeCnt < 2) {
+				height(e.target.textContent);
+				settimeCnt += 1;
+			}
+		
+		}, 200);
+		
 		if(flag){
-			height(e.target.textContent);
 			for(var i = 0; i < titleArr.length; i++) {
 				if(titleArr[i] === e.target.textContent){//중복의경우
 					$($('.tablink')[i]).addClass("active");
@@ -189,9 +213,7 @@ $(document).on('click','.tablink' , function(e){
 					$($('.closed:after')[i]).css("color", '#0088FE important');
 				}
 			}
-
 		}
-	
 	} 
 });
 
@@ -211,7 +233,6 @@ $(document).on('click','.allClose' , function all(e){
     	}
 
    		if(replay){
-			//alert("true");
   	   		$('#contents_area').css('display', 'block');
   	   		$('#tabArea').css('display','none');
   	   		$('.tabContainer').css('display', 'none');
@@ -226,7 +247,15 @@ $(document).on('click','.allClose' , function all(e){
 });
 
 var active = function(title) {
+	var settimeCnt = 0;
 	height(title);
+	setTimeout(function(){
+		if (settimeCnt < 2) {
+			height(title);
+			settimeCnt += 1;
+		}
+	
+	}, 200);
 	for(var i = 0; i < $('.tablink').length; i++){
 		if($($('.tablink')[i]).text() === title){//중복의경우
 			$($('.tablink')[i]).addClass("active");
@@ -242,19 +271,31 @@ var active = function(title) {
 	}
 }
 
+
 var fnIframeResize = function(height) {
-	//alert(height);
-    if(height != undefined) {
-        $('.tabContent').css("height", height + "px");
-    }else{
-     	$('.tabContent').css("height", 100 + "vh");
-    }
+	    if(height != undefined) {
+	    	$('.tabContent').css("height", height + "px");
+	    	$('.tabContent').css("width", 1920 + "px");
+	    }else{
+	     	$('.tabContent').css("min-height", 100 + "vh");
+	    }
+};
+
+var fnIframeResize2 = function(height) {
+	for(var i = 0; i < $('.tablink').length; i++) {
+	    if(height != undefined) {
+	    	if($($('.tabContent')[i]).css("display") === 'block'){
+	    		$($('.tabContent')[i]).css("min-height", $($('.tabContent')[i]).contents().find("body").height() + 20 + 'px');
+	    	}
+	    }else{
+	     	$('.tabContent').css("min-height", 100 + "vh");
+	    }
+	}
 };
 
 //tab delete
 $(document).on('click','.closed' , function(e){
 	delTab(e.target.parentElement.textContent);
-	//redraw
 });
 
 var cnt = 0;
@@ -266,14 +307,13 @@ const redraw = function(title) {
 
 	for(var j = 0; j < titleArr.length; j++){
 		if(titleArr[j] !== title){
-			//alert("?#@$@#$" + titleArr[j]);
-			//alert("SDAF#$%#$" + srcArr[j]);
 			newTitle.push(titleArr[j]);
 			newSrc.push(srcArr[j]);
 		}
 	}
 	
 	for(var i = 0; i < newTitle.length; i++){
+		//alert("new" + newTitle[i]);
 		if(cnt === 0){
 			reset = true;
 			draw = true;
@@ -284,7 +324,6 @@ const redraw = function(title) {
 			drawing(newTitle[i], newSrc[i]);
 		}
 		cnt++;
-		//alert("cnt" + cnt);
 	}
 
 	if(newTitle.length === 0){
@@ -292,6 +331,7 @@ const redraw = function(title) {
     	idx = 0;
     	titleArr = [];
     	srcArr = [];
+    	$("body").css('overflow-x','scroll');
 		$('#contents_area').css('display', 'block');
 		$('#tabArea').css('display','none');
 		$('.tabContainer').css('display', 'none');
@@ -304,7 +344,7 @@ const redraw = function(title) {
 
 
 const drawing = function(title,src) {
-	//alert("drawing");
+	//alert("title" + title);
 	height(title);
 	var tab = document.createElement('div');
     if(reset){
@@ -313,7 +353,7 @@ const drawing = function(title,src) {
     	titleArr = [];
     	srcArr = [];
     }
-    //alert("i" + idx);
+    
 	tab.id = 'tab' +idx;
 	$(tab).addClass('tablink');
 	const close = document.createElement('div');
@@ -321,7 +361,6 @@ const drawing = function(title,src) {
     $("#tab"+idx).attr("href", src);
   	$(tab).text(title);
 	titleArr.push(title);
-	//alert("redratitle" + titleArr.length);
 	srcArr.push(src);
     $(tab).append(close);
     $('.tabContainer').append(tab);
@@ -339,7 +378,7 @@ const drawing = function(title,src) {
 	index = idx;
 	$('<iframe>', {
 		   src: src,
-		   id:  'myFrame',
+		   id:  'bpmsFrame' + idx,
 		   class: 'tabContent',
 		   frameborder: 0,
 		   scrolling: 'no'
@@ -364,7 +403,13 @@ const drawing = function(title,src) {
 	//alert("src" + src);
 	idx++;
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
-	height(title);
+	var settimeCnt = 0;
+	if (settimeCnt < 3) {
+		setTimeout(function(){
+			height(title);
+			settimeCnt += 1;
+			}, 200);
+	}
 };
 
 var remove = false;
@@ -389,33 +434,3 @@ const delTab = function(title) {
 		}
 	}
 }
-
-
-
-var fnModalCloseIframeInvokeRegister = function(p_gbn) {
-    fnModalPopUpClose('modalPopUpLayer');
-    var frm = document.getElementById("contents_area");
-    frm.contentWindow.fnRegister(p_gbn);
-};
-
-var fnMovePageGetMethod = function(p_menuid, p_paramMap) {
-	//alert("init");
-    var _movePage = "";
-    var _param = "";
-    var _src = $("#topMenu li a[menu_id='"+p_menuid+"']").attr("move_src");
-    if(_src == undefined || _src == null || $.trim(_src) == "") {
-        return;
-    }
-    for(var k in p_paramMap) {
-        _param += k + "=" + p_paramMap[k] + "&";
-    }
-    switch(p_menuid) {
-		case '00201': { p_menuid = '사전심의목록'; break;}
-		case '00301': { p_menuid = '완료심의목록'; break;}
-		case '00401': { p_menuid = '계획전용'; break;}
-		case '00701': { p_menuid = '사후평가 목록'; break;}
-	}
-    
-    _movePage = _src + "?" + _param;
-    fnLoadContents(this, _movePage,p_menuid);
-};
