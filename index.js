@@ -13,10 +13,10 @@ var paramNew = '';
 var remove = false;
 var width  = 0;
 var lock = false;
+var delIndex = 0;
 
 //create + add tab
 var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
-	paramNew = param;
 	if(title !== undefined){
 		$('#tabArea').css('display','block');
 		$('.tabContainer').css('display', 'block');
@@ -25,14 +25,13 @@ var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
 		src = _src;
 		//remove = false;
 		if(remove === true){
-			alert("idx" + idx);
-			 idx = idx - 1;
-			 widthSum = width;
-			 widthSum = widthSum + 115;
-			 lock = true;
-			 remove = false;
+			//alert("removetrue");
+			//alert("idx" + idx);
+			 //lock = true;
+			 idx = delIndex + 1;
+			 widthSum = width + 115;
 			 create(_obj, _src , title, param , dateParam, gbn);
-		}else if(!remove){
+		}else {
 			create(_obj, _src , title, param , dateParam, gbn);
 		}
 	}else if(title === undefined){//dashboard only
@@ -49,22 +48,21 @@ var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
 const create = function(_obj, _src , title, param , dateParam, gbn) {
 	var container =  document.getElementsByClassName("container");
 	var tab = document.createElement('div');
-	alert("createidx" + idx);
+	//alert("createidx" + idx);
 	tab.id = 'tab' +idx;
 	//tab메뉴개수제한 10개이상 리턴
     if($('.tablink').length >= 10){
     	alert("더이상 탭을 추가할수 없습니다");
     	return;
     }
-		
-	 for(var i = 0; i < window.frames.length -1; i++){
-			if(param === 'new'){
-				alert("new");
-				alert('parma' + dateParam);
-	    		document.getElementById('bpmsFrame' + i).contentWindow.fnSearch(dateParam,gbn);
-	    		continue;
-	    	}
-	    	
+	
+    if(param) {
+		 for(var a = 0; a < window.frames.length -1; a++){				
+				if($($('.tabContent')[i]).css("display") === 'block'){
+					document.getElementById('bpmsFrame' + i).contentWindow.fnSearch(dateParam,gbn);
+					//continue;
+				}
+		 }  	
 	}
 
 	for(var i = 0; i < titleArr.length; i++) {
@@ -73,13 +71,12 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 	    		msg = 'same';
 	    		same = true;
 	    		active(title);
+	    		//idx = idx + 1;
 	    		return;
 	    	}
 		}
 
     }
-	
-
 
 	titleArr.push(title);
 	$(tab).addClass('tablink');
@@ -89,32 +86,44 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
   	$(tab).text(title);
     $(tab).append(close);
     $('.tabContainer').append(tab);
-	if(idx === 0){
-		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-		$("#tab"+idx).css("left", 19 + 'px');
-		widthSum = widthSum + 10 + 19;
-	}else if(!remove){
-		widthSum =  widthSum +  10;
-		$("#tab"+idx).css("left", (widthSum)+ 'px');
-		alert("lockfalse");
-		widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-		
-	}
+
 	if(remove){
-		if(lock){
+		remove = false;
+		$("#tab"+idx).css("left", (widthSum + 10 + 16)+ 'px');
+		//alert("locktrue");
+		lock = true;
+	}else{
+		if(idx === 0){
+			//widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+			$("#tab"+idx).css("left", 19 + 'px');
+			widthSum = $("#tab"+(idx)).outerWidth();
+			widthSum = widthSum + 19;
+		}else if(idx === 1) {
+			widthSum =  widthSum + 10;
+			//widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 			$("#tab"+idx).css("left", (widthSum)+ 'px');
-			widthSum =  widthSum +  10;
-			alert("lock");
-			lock = false;
+			//alert("idx > 0");
+			//alert("widthSum" + widthSum);
+			
 		}else{
-			$("#tab"+idx).css("left", (widthSum)+ 'px');
-			widthSum = widthSum + $("#tab"+(idx)).outerWidth();
-			widthSum =  widthSum +  10;
-			alert("lockfalse");
+			if(lock){
+				//alert("true");
+				widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+				widthSum =  widthSum +  10 + 27;
+				$("#tab"+idx).css("left", (widthSum)+ 'px');
+				//alert("widthSumq43" + widthSum);
+				lock = false;
+			}else{
+				widthSum =  widthSum + 10;
+				widthSum = widthSum + $("#tab"+(idx)).outerWidth();
+				$("#tab"+idx).css("left", (widthSum)+ 'px');
+				//alert("idx > 1");
+				//alert("widthSum" + widthSum);	
+			}
+
+			
 		}
 	}
-
-	
 	
 	view();
 	index = idx;
@@ -125,12 +134,9 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 		   frameborder: 0,
 		   scrolling: 'no'
 		   }).appendTo('.container');
-	
+	$($('.tabContent')[idx]).css("display", "block");
 	srcArr.push(src);
-	$('.container').append($('.tabContainerWrap'));
-	idx++;
 	var settimeCnt = 0;
-	//height(title);
 	setTimeout(function(){
 		if (settimeCnt < 2) {
 			height(title);
@@ -138,12 +144,12 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 		}
 	
 	}, 200);
+	idx++;
 };
 
 const view = function() {
 	for(var i = 0; i < $('.tablink').length; i++){
 		if((i === $('.tablink').length - 1)){
-			alert("init");
 			$($('.tablink')[i]).addClass("active");
 			$($('.tablink')[i]).removeClass("nonactive");
 		}else{
@@ -162,7 +168,7 @@ const view = function() {
 
 const height = function(title){
 	//title에따른 height길이 더 좋은방법이있다면 바꿀예정
-	alert(title);
+	//alert("heighttitle" + title);
 	switch(title){
 		case '사전심의목록': { fnIframeResize(undefined); $("body").css('overflow','hidden'); break;} 
 		case '심의결과': { fnIframeResize2($('.tabContent').contents().find("body").height());  $("body").css('overflow','scroll'); break; }
@@ -172,11 +178,11 @@ const height = function(title){
 		case '계획전용목록': { fnIframeResize(undefined); $("body").css('overflow','hidden'); break; }
 		case '부문요약': { fnIframeResize(2720); $("body").css('overflow','scroll'); break; }
 		case '사업장요약': {fnIframeResize(1400); $("body").css('overflow','scroll'); break; }
-		case '공사진척' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '공사진척' : {fnIframeResize(undefined); $("body").css('overflow-x','hidden'); break;}
 		case '실적상세' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
-		case '실행계획' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '실행계획' : {fnIframeResize(undefined); $("body").css('overflow-x','hidden'); break;}
 		case '투자품의 모니터링' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
-		case '부문일괄' : {fnIframeResize($("body").height()); $("body").css('overflow-x','hidden'); break;}
+		case '부문일괄' : {fnIframeResize(undefined); $("body").css('overflow-x','hidden'); break;}
 		case '사후평가 목록' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
 		case '집계요약' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
 		
@@ -242,7 +248,7 @@ $(document).on('click','.tablink' , function(e){
 		
 		var settimeCnt = 0;
 		setTimeout(function(){
-			if (settimeCnt < 2) {
+			if (settimeCnt < 1) {
 				height(e.target.textContent);
 				settimeCnt += 1;
 			}
@@ -290,6 +296,8 @@ $(document).on('click','.allClose' , function all(e){
   	   		srcArr = [];
   	   		widthSum = 0;
   	   		idx = 0;
+  	   		delIndex = 0;
+  	   		width = 0;
   		}
 	}
 
@@ -322,23 +330,29 @@ var active = function(title) {
 
 
 var fnIframeResize = function(height) {
-	    if(height != undefined) {
-	    	$('.tabContent').css("height", height + "px");
-	    	$('.tabContent').css("width", 1920 + "px");
-	    }else{
-	     	$('.tabContent').css("min-height", 100 + "vh");
-	    }
+	//alert(height);
+	for(var i = 0; i < $('.tablink').length; i++) {
+		if($($('.tabContent')[i]).css("display") === 'block'){
+		    if(height != undefined) {
+		    	$($('.tabContent')[i]).css("height", height + "px");
+		    	$($('.tabContent')[i]).css("width", window.screen.width + "px");
+		    }else{
+		    	$($('.tabContent')[i]).css("width", 100 + "%");
+		    	$($('.tabContent')[i]).css("height", 99 + "%");
+		    }
+		}
+	}
 };
 
 var fnIframeResize2 = function(height) {
 	for(var i = 0; i < $('.tablink').length; i++) {
-		alert("height"+ height);
+		//alert("height"+ height);
 	    if(height != undefined) {
 	    	if($($('.tabContent')[i]).css("display") === 'block'){
-	    		$($('.tabContent')[i]).css("min-height", $($('.tabContent')[i]).contents().find("body").height() + 20 + 'px');
+	    		$($('.tabContent')[i]).css("height", $($('.tabContent')[i]).contents().find("body").height() + 20 + 'px');
 	    	}
 	    }else{
-	     	$('.tabContent').css("min-height", 100 + "vh");
+	     	$('.tabContent').css("height", 100 + "vh");
 	    }
 	}
 };
@@ -360,8 +374,8 @@ const delTab = function(title) {
 		if($('.tablink').length  === 0){
 			return;
 		}
-		alert("iin" + i);
-		alert($("#tab"+ i).text());
+/* 		alert("iin" + i);
+		alert($("#tab"+ i).text()); */
 
 		if($("#tab"+ i).text() === title){
 			titleArr.splice(i,1);
@@ -369,40 +383,61 @@ const delTab = function(title) {
 	       	$('.tabContent')[i].parentNode.removeChild($('.tabContent')[i]);
 	       	if(i > 0) {
 	       		i = i -1;
-	       		//delTab();
 	       	}
 		}else{
-			alert("i" + i);
-			alert("*&&&^arr");
 			tabArr.push($('.tablink')[i]);
 			tabConArr.push($('.tabContent')[i]);
 		}
 	}
-	remove = true;
-	alert('tabArr' + tabArr);
-	alert('tabConArr' +tabConArr);
+	if(tabArr.length > 0 ) {
+		remove = true;
+	}else{
+		//alert("elseinit");
+		$("body").css('overflow','scroll');
+		$('#contents_area').css('display', 'block');
+		$('#tabArea').css('display','none');
+		$('.tabContainer').css('display', 'none');
+		$('#contents_area').attr('src', '${contextPath}/globalcj/bpms/bpms.dashboard');
+   		titleArr = [];
+   		srcArr = [];
+   		width = 0;
+   		idx = 0;
+   		delIndex = 0;
+   		remove = false;
+		return;
+	}
 	
+/* 	alert('tabArr' + tabArr);
+	alert('tabConArr' +tabConArr);
+	 */
 	tabArr.forEach (function (el, index) {
-			alert("index" + index);
+			//alert("index" + index);
 			el.id = 'tab' + index;
-		    if(index === 0){
-		    	alert("00");
-		    	alert("width" + width);
+			if(index === 0){
+				width = width + $(el).outerWidth();
 				$(el).css("left", 19 + 'px');
-			}else{
-				 width = width + $(el).outerWidth();
-				 width =  width +  10 + 19;
-				 alert("widt22h" + width);
+				width = width + 19;
+			}else if(index === 1) {
+				width =  width +  10;
+				//widthSum = widthSum + $("#tab"+(idx)).outerWidth();
 				$(el).css("left", (width)+ 'px');
+/* 				alert("idx > 0");
+				alert("widthSum" + width); */
+				
+			}else{
+				width =  width +  10;
+				width = width + $(el).outerWidth();
+				$(el).css("left", (width)+ 'px');
+	/* 			alert("idx > 1");
+				alert("widthSum" + width);	 */
 			}
-
 		
-		    
+		    delIndex =  index;
 	});
 	
 	tabConArr.forEach (function (el, index) {
-		alert("el" + el);
-		alert("conindex" + index)
+/* 		alert("el" + el);
+		alert("conindex" + index) */
 		el.id = 'bpmsFrame' + index;
 		height(titleArr[index]);
 	});
@@ -411,7 +446,6 @@ const delTab = function(title) {
 	view();
 }
 
-<%--임시사용--%>
 var fnModalCloseIframeInvokeRegister = function(p_gbn) {
     fnModalPopUpClose('modalPopUpLayer');
     for(var i = 0; i < window.frames.length -1; i++){
@@ -424,7 +458,6 @@ var fnModalCloseIframeInvokeRegister = function(p_gbn) {
     	
     }
 };
-
 var fnMovePageGetMethod = function(p_menuid, p_paramMap, gbn) {
 	//alert("init");
     var _movePage = "";
@@ -447,8 +480,7 @@ var fnMovePageGetMethod = function(p_menuid, p_paramMap, gbn) {
     
     _movePage = _src + "?" + _param;
     if(p_menuid === '사전심의목록' || p_menuid === '완료심의목록'){
-    	 alert("dsadf");
-    	 fnLoadContents(this, _movePage , p_menuid ,'new', _param , gbn);
+    	 fnLoadContents(this, _movePage , p_menuid , true , _param , gbn);
     	 height(p_menuid);
     }else{
     	 fnLoadContents(this, _movePage,p_menuid,'');
