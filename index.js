@@ -1,3 +1,64 @@
+var fnWindowReSize2 = function() {
+	$("#contents_area").css("width", $(document).width());
+	$("#contents_area").css("height", $(document).height());
+};
+
+var fnWindowReSize = function() {
+	$("#contents_area").css("width", window.screen.width);
+	$("#contents_area").css("height", window.screen.height);
+};
+
+$(window).on('resize', function(){
+	//fnWindowReSize2();
+});
+
+$(document).ready(function () {
+    <c:if test="${IS_LOGIN eq false}">
+    fnClosePopup("You need to login", true);
+    </c:if>
+    fnWindowFullScreen();
+    $(function(){
+        $('#topMenu > li > a').mouseenter(function () {
+          
+            if(!$(
+              $("#topMenu").find('.subtree')).is(':animated'));
+            // $("#topMenu").find('.subtree').css("z-index", "100"); 
+              $("#topMenu").find('.subtree').css("display", "block"); 
+          }); 
+
+       	  $('#header, #con').mouseleave(function () { 
+         	$("#header").find('#topLow, .subtree').css("display", "none"); 
+      	  });
+      
+    }); 
+    $('#topMenu> li> a').mouseenter(function () { 
+        $('a:hover').siblings('ul').addClass('on3');
+    });
+    $('#topMenu> li> a').mouseleave(function () { 
+        $('a').siblings('ul').removeClass('on3');
+    });
+    $('.subtree').mouseenter(function () { 
+        $(this).siblings('a').addClass('on3');
+    });
+    $('.subtree').mouseleave(function () { 
+        $(this).siblings('a').removeClass('on3');
+    });
+    $("#topMenu").children("li").each(function(q){
+        $(this).hover(function(){}, function(){}).focusin(function(){
+            if(! $( $('#header').find('#topLow, .subtree')).is(':animated'))
+                   ('#header').find('#topLow, .subtree').slideDown('slow'); 
+            }).focusout(function(){
+        });
+    });
+    $('#contents_area').on( 'load', function() {
+        $("#header").find('#topLow, .subtree').slideUp();
+    });
+    $('#contents_area').load(function() {
+    	//fnWindowReSize2();
+    }); 
+    fnLoadContents(this, '${contextPath}/globalcj/bpms/bpms.dashboard', undefined);
+});
+
 var index = 0;//tabindex
 var widthSum = 0;
 var src = null;
@@ -14,6 +75,8 @@ var remove = false;
 var width  = 0;
 var lock = false;
 var delIndex = 0;
+var dateParam2 = '';
+var signal = '';
 
 //create + add tab
 var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
@@ -29,7 +92,7 @@ var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
 			//alert("idx" + idx);
 			 //lock = true;
 			if(delIndex === 0){
-				 widthSum = width - 115- 49;  
+				 widthSum = width- 19;  
 			}else{
 				widthSum = width - 16;
 			}
@@ -47,6 +110,7 @@ var fnLoadContents = function(_obj, _src , title, param , dateParam, gbn) {
 		$('#tabArea').css('display','none');
 		$('.tabContainer').css('display', 'none');
 		$('#contents_area').attr('src', '${contextPath}/globalcj/bpms/bpms.dashboard');
+
 		return;
 	}
 };
@@ -59,19 +123,12 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 	tab.id = 'tab' +idx;
 	//tab메뉴개수제한 10개이상 리턴
     if($('.tablink').length >= 10){
+    	active(title);
+    	height(title);
     	alert("더이상 탭을 추가할수 없습니다");
-    	return;
+    	view(title);
+   		return;
     }
-	
-    if(param) {
-		 for(var a = 0; a < window.frames.length -1; a++){				
-			if($($('.tabContent')[i]).css("display") === 'block'){
-				//alert("date" + dateParam);
-				document.getElementById('bpmsFrame' + i).contentWindow.fnSearch(dateParam,gbn);
-				continue;
-			}
-		 }  	
-	}
 
 	for(var i = 0; i < titleArr.length; i++) {
 		if(i < idx ){
@@ -79,6 +136,7 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 	    		msg = 'same';
 	    		same = true;
 	    		active(title);
+	    		height(title);
 	    		//idx = idx + 1;
 	    		return;
 	    	}
@@ -169,14 +227,16 @@ const create = function(_obj, _src , title, param , dateParam, gbn) {
 		   scrolling: 'no'
 		   }).appendTo('.container');
 
-	//$($('.tabContent')[idx]).css("display", "block");
-	view();
+	$($('.tabContent')[idx]).css("display", "block");	
+	view(); 
 	height(title);
+	//adjust(title);
 	srcArr.push(src);
 	idx++;
 };
 
 const view = function() {
+	//alert("view");
 	for(var i = 0; i < $('.tablink').length; i++){
 		if((i === $('.tablink').length - 1)){
 			$($('.tablink')[i]).addClass("active");
@@ -202,23 +262,52 @@ const height = function(title){
 	//alert("heighttitle" + title);
  	switch(title){
 		case '사전심의목록': { fnIframeResize(); $("body").css('overflow','hidden'); break;} 
-		case '심의결과': { fnIframeResize2($('.tabContent').contents().find("body").height());  $("body").css('overflow','scroll'); break; }
-		case '사업장별현황': { fnIframeResize(1300); $("body").css('overflow','scroll'); break; }
+		case '심의결과': { fnIframeResize2($('.tabContent').contents().find("body").height() + 20);  $("body").css('overflow','scroll'); break; }
+		case '사업장별현황': { fnIframeResize(1300,'사업장별현황'); $("body").css('overflow','scroll'); break; }
 		case '완료심의목록': { fnIframeResize(); $("body").css('overflow','hidden'); break; }
-		case '사업장별현황(완료)': { fnIframeResize($("body").height()+150); $("body").css('overflow-x','scroll'); break; }
+		case '사업장별현황(완료)': { fnIframeResize(867); $("body").css('overflow','scroll'); break; }
 		case '계획전용목록': { fnIframeResize(); $("body").css('overflow','hidden'); break; }
-		case '부문요약': { fnIframeResize(2720); $("body").css('overflow','scroll'); break; }
-		case '사업장요약': {fnIframeResize(1400); $("body").css('overflow','scroll'); break; }
-		case '공사진척' : {fnIframeResize(); $("body").css('overflow-x','hidden'); break;}
-		case '실적상세' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
-		case '실행계획' : {fnIframeResize(); $("body").css('overflow-x','hidden'); break;}
+		case '부문요약': { fnIframeResize(3000,'부문요약'); $("body").css('overflow','scroll'); break; }
+		case '사업장요약': {fnIframeResize(1430,'사엄장요약'); $("body").css('overflow','scroll'); break; }
+		case '공사진척' : {fnIframeResize(); $("body").css('overflow','hidden'); break;}
+		case '실적상세' : {fnIframeResize(900); $("body").css('overflow','scroll'); break;}
+		case '실행계획' : {fnIframeResize(); $("body").css('overflow','hidden'); break;}
 		case '투자품의 모니터링' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
-		case '부문일괄' : {fnIframeResize(); $("body").css('overflow-x','hidden'); break;}
+		case '부문일괄' : {fnIframeResize(); $("body").css('overflow','hidden'); break;}
 		case '사후평가 목록' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
 		case '집계요약' : {fnIframeResize($("body").height()); $("body").css('overflow-x','scroll'); break;}
 		
 	} 
 };
+
+
+ const adjust = function(title){
+ 	switch(title){
+		case '사전심의목록': { fnbtnResize();  break;} 
+		case '심의결과': { fnbtnResize();   break; }
+		case '사업장별현황': { fnbtnResize();  break; }
+		case '완료심의목록': { fnbtnResize(); break; }
+		case '사업장별현황(완료)': { fnbtnResize(); break; }
+		case '계획전용목록': { fnbtnResize();  break; }
+		case '부문요약': { fnbtnResize();  break; }
+		case '사업장요약': {fnbtnResize();  break; }
+		case '공사진척' : {fnbtnResize();  break;}
+		case '실적상세' : {fnbtnResize();  break;}
+		case '실행계획' : {fnbtnResize(); break;}
+		case '투자품의 모니터링' : {fnbtnResize(); break;}
+		case '부문일괄' : {fnbtnResize();  break;}
+		case '사후평가 목록' : {fnbtnResize(); break;}
+		case '집계요약' : {fnbtnResize(); break;}
+		
+	} 
+}; 
+
+ const fnbtnResize = function(param) {
+		$('.allClose').css("left", '');
+		$('.allClose').css("right", 54 + 'px');
+}
+	
+
 
 $(document).on('click','.tablink' , function(e){
 	//alert(e.target.textContent);
@@ -227,12 +316,6 @@ $(document).on('click','.tablink' , function(e){
 	var flag = false;
 	var closed = false;
 	same = false;
-
-    if($('.tablink').length >= 10){
-    	active(e.target.textContent);
-    	height(e.target.textContent);
-    	return;
-    }
 
 	for(var i = 0; i < titleArr.length; i++) {
 	    if(titleArr[i] === e.target.textContent) {
@@ -254,11 +337,9 @@ $(document).on('click','.tablink' , function(e){
 			   class: 'tabContent',
 			   frameborder: 0,
 			   scrolling: 'no'
-			   }).appendTo('.container');	
+			   }).appendTo('.container');
 	}
-
-		
-
+	
 	for(var i = 0; i < $('.tablink').length; i++){
 		if((i === $('.tablink').length - 1)){
 			$($('.tablink')[i]).addClass("active");
@@ -278,22 +359,24 @@ $(document).on('click','.tablink' , function(e){
 			return;
 		}
 	
-		
-		if(flag){
-			for(var i = 0; i < titleArr.length; i++) {
-				if(titleArr[i] === e.target.textContent){//중복의경우
-					$($('.tablink')[i]).addClass("active");
-					$($('.tablink')[i]).removeClass("nonactive");
-					$($('.tabContent')[i]).css("display", "block");
-				}else{//중복아닌애들
-					$($('.tabContent')[i]).css("display", "none");
-					$($('.tablink')[i]).removeClass("active");//tab활성화
-					$($('.tablink')[i]).addClass("nonactive");
-					$($('.closed:after')[i]).css("color", '#0088FE important');
-				}
+	
+	if(flag){
+		for(var i = 0; i < titleArr.length; i++) {
+			if(titleArr[i] === e.target.textContent){//중복의경우
+				$($('.tablink')[i]).addClass("active");
+				$($('.tablink')[i]).removeClass("nonactive");
+				$($('.tabContent')[i]).css("display", "block");
+			}else{//중복아닌애들
+				$($('.tabContent')[i]).css("display", "none");
+				$($('.tablink')[i]).removeClass("active");//tab활성화
+				$($('.tablink')[i]).addClass("nonactive");
+				$($('.closed:after')[i]).css("color", '#0088FE important');
 			}
 		}
+	}
+
 		height(e.target.textContent);
+		//adjust(e.target.textContent);
 	} 
 });
 
@@ -329,7 +412,6 @@ $(document).on('click','.allClose' , function all(e){
 });
 
 var active = function(title) {
-
 	for(var i = 0; i < $('.tablink').length; i++){
 		if($($('.tablink')[i]).text() === title){//중복의경우
 			$($('.tablink')[i]).addClass("active");
@@ -347,18 +429,23 @@ var active = function(title) {
 
 
 var fnIframeResize = function(height,title) {
-	//alert('height' + height);
 	if(height !== null && height !== '' && height !== undefined){
 		for(var i = 0; i < $('.tabContent').length; i++) {
 			if($($('.tabContent')[i]).css("display") === 'block'){
-				//alert("***");
+				//alert("***&");
+		    	if(title === '사업장별현황'){
+		    		$($('.tabContent')[i]).css("min-width", 1560 + "px");
+		    	}else if(title === '부문요약'){
+		    		$($('.tabContent')[i]).css("min-width", 2000 + "px");
+		    	}else if(title === '사엄장요약'){
+		    		$($('.tabContent')[i]).css("min-width", 2000 + "px");
+		    	}
 				$($('.tabContent')[i]).css("width", "");
 	    		$($('.tabContent')[i]).css("height", "");
 		    	$($('.tabContent')[i]).css("height", 100 + '%');
 		    	$($('.tabContent')[i]).css("min-height", height + 'px');
 		    	$($('.tabContent')[i]).css("width", 100 + "%");
-		    	$($('.tabContent')[i]).css("min-width", window.screen.width + "px");
-		    	break;
+		    	//$($('.tabContent')[i]).css("min-width", window.screen.width + "px");
 			}else{
 				$($('.tabContent')[i]).css("display",'none');
 				$($('.tabContent')[i]).css("width", "");
@@ -378,7 +465,6 @@ var fnIframeResize = function(height,title) {
 		    	$($('.tabContent')[i]).css("min-height", 0);
 		    	$($('.tabContent')[i]).css("width", 100 + "%");
 		    	$($('.tabContent')[i]).css("height", 99 + "%");
-		    	break;
 			}else{
 				$($('.tabContent')[i]).css("display",'none');
 				$($('.tabContent')[i]).css("width", "");
@@ -390,34 +476,18 @@ var fnIframeResize = function(height,title) {
 	}
 };
 
-const fnIframeResize3 = function() {
-	for(var i = 0; i < $('.tabContent').length; i++) {
-		if($($('.tabContent')[i]).css("display") === 'block'){
-			$($('.tabContent')[i]).css("width", "");
-    		$($('.tabContent')[i]).css("height", "");
-			$($('.tabContent')[i]).css("min-width", 0);
-	    	$($('.tabContent')[i]).css("min-height", 0);
-	    	$($('.tabContent')[i]).css("width", 100 + "%");
-	    	$($('.tabContent')[i]).css("height", 99 + "%");
-		}else{
-			$($('.tabContent')[i]).css("display",'none');
-			$($('.tabContent')[i]).css("width", "");
-    		$($('.tabContent')[i]).css("height", "");
-    		$($('.tabContent')[i]).css("min-width", "");
-	    	$($('.tabContent')[i]).css("min-height", "");
-		}
-	}
-};
 
 var fnIframeResize2 = function(height) {
 	for(var i = 0; i < $('.tablink').length; i++) {
 		//alert("height"+ height);
 	    if(height != undefined) {
 	    	if($($('.tabContent')[i]).css("display") === 'block'){
-	    		$($('.tabContent')[i]).css("height", $($('.tabContent')[i]).contents().find("body").height() + 20 + 'px');
+	    		$($('.tabContent')[i]).css("width", 100 + "%");
+		    	//$($('.tabContent')[i]).css("min-width", window.screen.width + "px");
+	    		$($('.tabContent')[i]).css("height", + 100 + '%');
+	    		$($('.tabContent')[i]).css("min-height", + $($('.tabContent')[i]).contents().find("body").height() + 20 + 'px');
+	    		
 	    	}
-	    }else{
-	     	$('.tabContent').css("height", 100 + "vh");
 	    }
 	}
 };
@@ -439,7 +509,7 @@ const delTab = function(title) {
 		if(tabArr.length  === titleArr.length){
 			return;
 		}
-		//alert("tab***&&");
+		height(titleArr[i]);
 		if($('.tablink').length  === 0){
 			return;
 		}
@@ -453,6 +523,7 @@ const delTab = function(title) {
 	       		//alert(i);
 	       		//alert(titleArr.length);
 	       		delTab(title);
+	       		//height(titleArr[i]);
 	       	}
 		}else{
 			tabArr.push($('.tablink')[i]);
@@ -506,17 +577,16 @@ const delTab = function(title) {
 			
 			    delIndex =  index;
 			}
-
 	});
 	
 	tabConArr.forEach (function (el, index) {
-/* 		alert("el" + el);
-		alert("conindex" + index) */
+		el.class = 'tabContent';
 		el.id = 'bpmsFrame' + index;
-		height(titleArr[index]);
 	});
-
 	view();
+	for(var i = 0; i < titleArr.length; i++) {
+		height(titleArr[i]);
+	}
 }
 
 var fnModalCloseIframeInvokeRegister = function(p_gbn) {
@@ -531,6 +601,7 @@ var fnModalCloseIframeInvokeRegister = function(p_gbn) {
     	
     }
 };
+
 var fnMovePageGetMethod = function(p_menuid, p_paramMap, gbn) {
 	//alert("init");
     var _movePage = "";
@@ -539,9 +610,12 @@ var fnMovePageGetMethod = function(p_menuid, p_paramMap, gbn) {
     if(_src == undefined || _src == null || $.trim(_src) == "") {
         return;
     }
-    for(var k in p_paramMap) {
-        _param += p_paramMap[k] + "&";
+    
+ 	var keys = Object.keys(p_paramMap); //키를 가져옵니다. 이때, keys 는 반복가능한 객체가 됩니다.
+    for (var i=0; i<keys.length; i++) {
+    	_param += keys[i] + "=" + p_paramMap[keys[i]] + "&";
     }
+    
     switch(p_menuid) {
 		case '00201': { p_menuid = '사전심의목록'; break;}
 		case '00301': { p_menuid = '완료심의목록'; break;}
@@ -552,7 +626,8 @@ var fnMovePageGetMethod = function(p_menuid, p_paramMap, gbn) {
 	}
     
     _movePage = _src + "?" + _param;
-    if(p_menuid === '사전심의목록' || p_menuid === '완료심의목록'){
+    if(p_menuid === '사전심의목록' || p_menuid === '완료심의목록' || p_menuid === '계획전용' || p_menuid === '사후평가 목록'){
+    	 //alert("parama" + _param);
     	 fnLoadContents(this, _movePage , p_menuid , true , _param , gbn);
     	 height(p_menuid);
     }else{
