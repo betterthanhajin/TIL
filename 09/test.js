@@ -68,10 +68,27 @@ let Rectangle2 = new Rectangle(100,200);
 console.log(Rectangle2.height)
 
 
-class Node {
+class TrieNode {
   constructor(value = "") {
     this.value = value;
     this.children = new Map();
   }
 }
 
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+
+  insert(string) {
+    let currentNode = this.root;
+    for (const char of string) {
+      if (!currentNode.children.has(char)) {
+        currentNode.children.set(char
+          , new TrieNode(currentNode.value + char)
+        );
+      }
+      currentNode = currentNode.children.get(char);
+    }
+  }
+}
