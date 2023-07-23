@@ -1,0 +1,101 @@
+html {
+    height:100%;
+}
+
+body {
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+li {
+list-style: none;
+}
+
+
+#startDownload {
+    background-color: aquamarine;
+    color:white;
+    font-size: 20px;
+    font-weight: 900;
+    border:0;
+    padding:10px;
+}
+
+#startDownload:disabled {
+    background-color:rgb(39, 92,74);
+}
+
+
+.download-progress-bar__container {
+    margin: 20px 0;
+    width: 400px;
+    height: 40px;
+    background: black;
+    border-radius: 20px;
+    box-shadow: 0 0 64px 64px rgba(255, 255, 255, 0.15);
+}
+
+
+.download-progress-bar__progress {
+background: linear-gradient(to right, 
+rgba(51,139,147)
+, rgb(182,244,146) 
+);
+color:rgb(237,235,235);
+border-radius: 20px;
+font-weight: 900;
+display:flex;
+align-items: center;
+justify-content: center;
+width: 0;
+height: 100%;
+}
+
+
+.download-progress-bar__progress.error {
+    background: red;
+}
+
+
+.modal-popup-layer {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  right: 0;
+  /* bottom: 0; */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  display: none;
+}
+
+.modal-body {
+  width: 500px;
+  height: 500px;
+  padding: 30px 30px;
+  margin: 0 auto;
+  border: 1px solid #777;
+  background-color: #fff;
+}
+
+.modal-title {
+position: fixed;
+top:0;
+left:0;
+background: linear-gradient(to right, 
+rgba(51,139,147)
+, rgb(182,244,146) 
+);
+}
+
+#closeBtn {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
