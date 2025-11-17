@@ -1,9 +1,13 @@
-import Todo from "../components/todo";
+import TodoPage from "../features/todo/ui/TodoPage";
 
 export default function app() {
   return (
-    <section>
-        <Todo/>
-    </section>
+    <html>
+      <head>
+      </head>
+      <body>
+        <TodoPage/>
+      </body>
+    </html>
   )
 } 
