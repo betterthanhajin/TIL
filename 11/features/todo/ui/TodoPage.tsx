@@ -41,11 +41,10 @@ export const initialTodos:Todo[] = [
   },
 ];
 
-
 export default function TodoPage() {
   return (
     <section>
-        <TodoList todos={initialTodos} onToggle={(id:string)=>{console.log(id)}} onRemove={(id)=>{console.log(id)}}/>
+        <TodoList todos={initialTodos} onToggle={()=>{}} onRemove={()=>{}}/>
     </section>
   )
 } 
